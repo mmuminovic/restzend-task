@@ -69,6 +69,7 @@ class App extends Component {
                 name
                 email
             }
+          }
           `,
         };
         /* And the other fields you want here}*/
