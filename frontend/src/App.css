@@ -1,16 +1,61 @@
 .App {
+  width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
-  align-self: center;
-  flex-direction: column;
-  height: 100vh;
-  width: 500px;
-  margin: 0 auto;
+  align-items: center;
 }
 
-input {
-  margin: 5px;
+.Background {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: -1;
+  background-image: url('./assets/images/backgroundimage.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(5px);
 }
+
+.Form {
+  margin: 0 auto;
+  display: flex;
+  flex: 0 1 400px;
+  height: 500px;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+  text-align: center;
+}
+
+.Form div {
+  flex: 0 1;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.Form h2 {
+  color: #3f51b5;
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 20px;
+  border-radius: 50px;
+}
+
+.Form label {
+  color: #333;
+}
+
+.SubmitButton {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.SubmitButton button {
+  flex: 1 1 250px;
+  align-self: center;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

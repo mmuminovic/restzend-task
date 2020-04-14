@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Button, TextField, Input } from "@material-ui/core";
 
 import "./App.css";
 
@@ -78,55 +79,93 @@ class App extends Component {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(graphqlQuery),
-        }).then(res => res.json())
-        .then(result => {
-          console.log(result);
-        });
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            console.log(result);
+          });
       });
   };
 
   render() {
-    const { email, name, phoneNumber, address, zipCode, file } = this.state;
+    const {
+      email,
+      name,
+      phoneNumber,
+      address,
+      zipCode,
+    } = this.state.applicationData;
+    console.log(this.state);
 
     return (
       <div className="App">
-        <input
-          type="email"
-          onChange={this.changeHandler}
-          name="email"
-          placeholder="Email"
-          value={email}
-        />
-        <input
-          type="text"
-          onChange={this.changeHandler}
-          name="name"
-          placeholder="Name"
-          value={name}
-        />
-        <input
-          type="text"
-          onChange={this.changeHandler}
-          name="phoneNumber"
-          placeholder="Phone number"
-          value={phoneNumber}
-        />
-        <input
-          type="text"
-          onChange={this.changeHandler}
-          name="address"
-          placeholder="Address"
-          value={address}
-        />
-        <input
-          type="text"
-          onChange={this.changeHandler}
-          name="zipCode"
-          placeholder="Zip code"
-          value={zipCode}
-        />
-        <input type="file" name="file" onChange={this.fileInputChangeHandler} />
-        <button onClick={this.onFormSubmit}>Submit</button>
+        <div className="Background"></div>
+        <div className="Form">
+          <h2>Send your application</h2>
+          <TextField
+            type="email"
+            onChange={this.changeHandler}
+            name="email"
+            value={email}
+            label="Email"
+            variant="filled"
+          />
+
+          <TextField
+            type="text"
+            onChange={this.changeHandler}
+            name="name"
+            value={name}
+            label="Name"
+            variant="filled"
+          />
+
+          <TextField
+            type="text"
+            onChange={this.changeHandler}
+            name="phoneNumber"
+            value={phoneNumber}
+            label="Phone number"
+            variant="filled"
+          />
+
+          <TextField
+            type="text"
+            onChange={this.changeHandler}
+            name="address"
+            value={address}
+            label="Address"
+            variant="filled"
+          />
+
+          <TextField
+            type="text"
+            onChange={this.changeHandler}
+            name="zipCode"
+            value={zipCode}
+            label="Zip code"
+            variant="filled"
+          />
+
+          <Button variant="contained" component="label">
+            Upload File
+            <Input
+              type="file"
+              name="file"
+              onChange={this.fileInputChangeHandler}
+              style={{ display: "none" }}
+            />
+          </Button>
+          <div className="SubmitButton">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.onFormSubmit}
+            >
+              Submit
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
