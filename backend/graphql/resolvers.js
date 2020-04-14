@@ -19,7 +19,7 @@ module.exports = {
     }
     if (
       validator.isEmpty(docInput.phoneNumber) ||
-      !validator.isLength(docInput.phoneNumber, { min: 8 })
+      !validator.isLength(docInput.phoneNumber, { min: 13 })
     ) {
       errors.push({ message: 'Phone number is invalid.' });
     }

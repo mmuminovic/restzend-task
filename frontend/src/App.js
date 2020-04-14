@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Button, TextField, Input } from "@material-ui/core";
+import Form from "./components/ValidateAppForm";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import "./App.css";
 
@@ -8,42 +9,13 @@ class App extends Component {
     super();
 
     this.state = {
-      applicationData: {
-        email: "",
-        name: "",
-        phoneNumber: "",
-        address: "",
-        zipCode: "",
-        file: null,
-      },
+      loading: false,
     };
   }
 
-  changeHandler = (e) => {
-    const { name, value } = e.target;
-    this.setState({
-      ...this.state,
-      applicationData: {
-        ...this.state.applicationData,
-        [name]: value,
-      },
-    });
-  };
-
-  fileInputChangeHandler = (e) => {
-    this.setState({
-      ...this.state,
-      applicationData: {
-        ...this.state.applicationData,
-        file: e.target.files[0],
-      },
-    });
-  };
-
-  onFormSubmit = (e) => {
-    e.preventDefault();
+  onFormSubmit = (values) => {
     const formData = new FormData();
-    formData.append("image", this.state.applicationData.file);
+    formData.append("image", values.file);
 
     fetch("http://localhost:8000/post-image", {
       method: "PUT",
@@ -52,17 +24,17 @@ class App extends Component {
       .then((res) => res.json())
       .then((result) => result.filePath)
       .then((imageUrl) => {
-        const { applicationData } = this.state;
+        this.setState({ loading: true });
         const graphqlQuery = {
           query: `
             mutation {
               createDoc(docInput:
                 {
-                email: "${applicationData.email}",
-                name: "${applicationData.name}",
-                phoneNumber: "${applicationData.phoneNumber}",
-                address: "${applicationData.address}",
-                zipCode: "${applicationData.zipCode}",
+                email: "${values.email}",
+                name: "${values.name}",
+                phoneNumber: "${values.phoneNumber}",
+                address: "${values.address}",
+                zipCode: "${values.zipCode}",
                 file: "${imageUrl}"
               }
               ){
@@ -83,90 +55,26 @@ class App extends Component {
         })
           .then((res) => res.json())
           .then((result) => {
-            console.log(result);
+            this.setState({ loading: false });
           });
       });
   };
 
   render() {
-    const {
-      email,
-      name,
-      phoneNumber,
-      address,
-      zipCode,
-    } = this.state.applicationData;
-    console.log(this.state);
-
     return (
-      <div className="App">
+      <div>
         <div className="Background"></div>
-        <div className="Form">
-          <h2>Send your application</h2>
-          <TextField
-            type="email"
-            onChange={this.changeHandler}
-            name="email"
-            value={email}
-            label="Email"
-            variant="filled"
-          />
-
-          <TextField
-            type="text"
-            onChange={this.changeHandler}
-            name="name"
-            value={name}
-            label="Name"
-            variant="filled"
-          />
-
-          <TextField
-            type="text"
-            onChange={this.changeHandler}
-            name="phoneNumber"
-            value={phoneNumber}
-            label="Phone number"
-            variant="filled"
-          />
-
-          <TextField
-            type="text"
-            onChange={this.changeHandler}
-            name="address"
-            value={address}
-            label="Address"
-            variant="filled"
-          />
-
-          <TextField
-            type="text"
-            onChange={this.changeHandler}
-            name="zipCode"
-            value={zipCode}
-            label="Zip code"
-            variant="filled"
-          />
-
-          <Button variant="contained" component="label">
-            Upload File
-            <Input
-              type="file"
-              name="file"
-              onChange={this.fileInputChangeHandler}
-              style={{ display: "none" }}
+        {this.state.loading ? (
+          <div className="App">
+            <ClipLoader
+              size={150}
+              color={"#3f51b5"}
+              loading={this.state.loading}
             />
-          </Button>
-          <div className="SubmitButton">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.onFormSubmit}
-            >
-              Submit
-            </Button>
           </div>
-        </div>
+        ) : (
+          <Form submit={this.onFormSubmit} />
+        )}
       </div>
     );
   }
