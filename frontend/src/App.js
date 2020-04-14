@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+
 import "./App.css";
 
 class App extends Component {
@@ -7,12 +7,14 @@ class App extends Component {
     super();
 
     this.state = {
-      email: "",
-      name: "",
-      phoneNumber: "",
-      address: "",
-      zipCode: "",
-      file: "",
+      applicationData: {
+        email: "",
+        name: "",
+        phoneNumber: "",
+        address: "",
+        zipCode: "",
+        file: null,
+      },
     };
   }
 
@@ -20,12 +22,70 @@ class App extends Component {
     const { name, value } = e.target;
     this.setState({
       ...this.state,
-      [name]: value,
+      applicationData: {
+        ...this.state.applicationData,
+        [name]: value,
+      },
     });
   };
 
+  fileInputChangeHandler = (e) => {
+    this.setState({
+      ...this.state,
+      applicationData: {
+        ...this.state.applicationData,
+        file: e.target.files[0],
+      },
+    });
+  };
+
+  onFormSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("image", this.state.applicationData.file);
+
+    fetch("http://localhost:8000/post-image", {
+      method: "PUT",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((result) => result.filePath)
+      .then((imageUrl) => {
+        const { applicationData } = this.state;
+        const graphqlQuery = {
+          query: `
+            mutation {
+              createDoc(docInput:
+                {
+                email: "${applicationData.email}",
+                name: "${applicationData.name}",
+                phoneNumber: "${applicationData.phoneNumber}",
+                address: "${applicationData.address}",
+                zipCode: "${applicationData.zipCode}",
+                file: "${imageUrl}"
+              }
+              ){
+                name
+                email
+            }
+          `,
+        };
+        /* And the other fields you want here}*/
+
+        fetch("http://localhost:8000/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(graphqlQuery),
+        }).then(res => res.json())
+        .then(result => {
+          console.log(result);
+        });
+      });
+  };
+
   render() {
-    console.log(this.state);
     const { email, name, phoneNumber, address, zipCode, file } = this.state;
 
     return (
@@ -65,7 +125,8 @@ class App extends Component {
           placeholder="Zip code"
           value={zipCode}
         />
-        <button onClick={this.submitHandler}>Submit</button>
+        <input type="file" name="file" onChange={this.fileInputChangeHandler} />
+        <button onClick={this.onFormSubmit}>Submit</button>
       </div>
     );
   }

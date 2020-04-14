@@ -8,6 +8,7 @@ module.exports = buildSchema(`
         address: String!
         phoneNumber: String!
         zipCode: String!
+        file: String!
     }
 
     input DocInputData {
@@ -16,10 +17,11 @@ module.exports = buildSchema(`
         address: String!
         phoneNumber: String!
         zipCode: String!
+        file: String!
     }
 
     type RootMutation {
-        createDoc(postInput: DocInputData): Doc!
+        createDoc(docInput: DocInputData): Doc!
     }
 
     type RootQuery {
