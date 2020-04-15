@@ -47,7 +47,7 @@ module.exports = {
       address: docInput.address,
       phoneNumber: docInput.phoneNumber,
       zipCode: docInput.zipCode,
-      files: docInput.file
+      files: docInput.files
     });
     return applicationDocument.dataValues;
   },

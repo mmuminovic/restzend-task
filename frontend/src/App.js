@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Form from "./components/ValidateAppForm";
 import ClipLoader from "react-spinners/ClipLoader";
+import Modal from "./components/Modal/Modal";
 
 import "./App.css";
 
@@ -10,6 +11,15 @@ class App extends Component {
 
     this.state = {
       loading: false,
+      showModal: false,
+      application: {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        address: "",
+        zipCode: "",
+        files: "",
+      },
     };
   }
 
@@ -35,13 +45,17 @@ class App extends Component {
                 phoneNumber: "${values.phoneNumber}",
                 address: "${values.address}",
                 zipCode: "${values.zipCode}",
-                file: "${imageUrl}"
+                files: "${imageUrl}"
               }
               ){
                 name
                 email
+                phoneNumber
+                address
+                zipCode
+                files
+              }
             }
-          }
           `,
         };
         /* And the other fields you want here}*/
@@ -55,12 +69,31 @@ class App extends Component {
         })
           .then((res) => res.json())
           .then((result) => {
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showModal: true,
+              application: {
+                ...this.state.application,
+                ...result.data.createDoc,
+              },
+            });
           });
       });
   };
 
+  closeModalHandler = () => {
+    this.setState({ showModal: false });
+  };
+
   render() {
+    const {
+      name,
+      email,
+      address,
+      phoneNumber,
+      zipCode,
+    } = this.state.application;
+
     return (
       <div>
         <div className="Background"></div>
@@ -75,6 +108,17 @@ class App extends Component {
         ) : (
           <Form submit={this.onFormSubmit} />
         )}
+        <Modal show={this.state.showModal} modalClosed={this.closeModalHandler}>
+          <div className="modal">
+            <h3>Application sent successfuly</h3>
+            <h4>Your application:</h4>
+            <p>Name: {name}</p>
+            <p>Email: {email}</p>
+            <p>Phone Number: {phoneNumber}</p>
+            <p>Address: {address}</p>
+            <p>Zip code: {zipCode}</p>
+          </div>
+        </Modal>
       </div>
     );
   }
